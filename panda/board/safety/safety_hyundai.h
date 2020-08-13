@@ -30,11 +30,7 @@ const int HYUNDAI_RX_CHECK_LEN = sizeof(hyundai_rx_checks) / sizeof(hyundai_rx_c
 AddrCheckStruct hyundai_legacy_rx_checks[] = {
   {.msg = {{902, 0, 8, .expected_timestep = 10000U}}},
   {.msg = {{916, 0, 8, .expected_timestep = 10000U}}},
-#if (hyundai_radar_harness_present)
-    {.msg = {{1057, 2, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
-#else
-    {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
-#endif
+  {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
 };
 const int HYUNDAI_LEGACY_RX_CHECK_LEN = sizeof(hyundai_legacy_rx_checks) / sizeof(hyundai_legacy_rx_checks[0]);
 
@@ -104,14 +100,13 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   if (valid && (bus == 0)) {
 
-    if ((addr == 593) && (!hyundai_mdps_harness_present)) {
+    if (addr == 593) {
       int torque_driver_new = ((GET_BYTES_04(to_push) & 0x7ff) * 0.79) - 808; // scale down new driver torque signal to match previous one
       // update array of samples
       update_sample(&torque_driver, torque_driver_new);
     }
-
     // enter controls on rising edge of ACC, exit controls on ACC off
-    if ((addr == 1057) && (!hyundai_radar_harness_present)){
+    if (addr == 1057){
       // 2 bits: 13-14
       int cruise_engaged = (GET_BYTES_04(to_push) >> 13) & 0x3;
       if (cruise_engaged && !cruise_engaged_prev) {
@@ -123,7 +118,6 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       cruise_engaged_prev = cruise_engaged;
       controls_allowed = 1;
     }
-
     // sample wheel speed, averaging opposite corners
     if (addr == 902) {
       int hyundai_speed = GET_BYTES_04(to_push) & 0x3FFF;  // FL
@@ -140,33 +134,6 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
     generic_rx_checks((addr == 832));
   }
-  
-  if (valid && (bus == 1) && hyundai_mdps_harness_present) {
-
-    if (addr == 593) {
-      int torque_driver_new = ((GET_BYTES_04(to_push) & 0x7ff) * 0.79) - 808; // scale down new driver torque signal to match previous one
-      // update array of samples
-      update_sample(&torque_driver, torque_driver_new);
-    }
-  }
-
-  if (valid && (bus == 2) && hyundai_radar_harness_present) {
-
-    // enter controls on rising edge of ACC, exit controls on ACC off
-    if (addr == 1057){
-      // 2 bits: 13-14
-      int cruise_engaged = GET_BYTES_04(to_push) & 0x1; // ACC main_on signal
-      if (cruise_engaged && !cruise_engaged_prev) {
-        controls_allowed = 1;
-      }
-      if (!cruise_engaged) {
-        controls_allowed = 0;
-      }
-      cruise_engaged_prev = cruise_engaged;
-      controls_allowed = 1;
-    }
-  }
-
   return valid;
 }
 
