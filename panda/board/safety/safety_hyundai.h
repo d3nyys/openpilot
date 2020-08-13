@@ -102,6 +102,15 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
   int bus = GET_BUS(to_push);
 
+  if (valid && (bus == 1) && hyundai_mdps_harness_present) {
+
+    if (addr == 593) {
+      int torque_driver_new = ((GET_BYTES_04(to_push) & 0x7ff) * 0.79) - 808; // scale down new driver torque signal to match previous one
+      // update array of samples
+      update_sample(&torque_driver, torque_driver_new);
+    }
+  }
+
   if (valid && (bus == 0)) {
 
     if ((addr == 593) && (!hyundai_mdps_harness_present)) {
@@ -140,15 +149,6 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
     generic_rx_checks((addr == 832));
   }
-  
-  if (valid && (bus == 1) && hyundai_mdps_harness_present) {
-
-    if (addr == 593) {
-      int torque_driver_new = ((GET_BYTES_04(to_push) & 0x7ff) * 0.79) - 808; // scale down new driver torque signal to match previous one
-      // update array of samples
-      update_sample(&torque_driver, torque_driver_new);
-    }
-  }
 
   if (valid && (bus == 2) && hyundai_radar_harness_present) {
 
@@ -185,7 +185,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   }
 
   // LKA STEER: safety check
-  if (addr == 832) {
+  if ((addr == 832) && (((bus == 0) && (!hyundai_mdps_harness_present)) || (bus == 1))) {
     int desired_torque = ((GET_BYTES_04(to_send) >> 16) & 0x7ff) - 1024;
     uint32_t ts = TIM2->CNT;
     bool violation = 0;
