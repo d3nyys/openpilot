@@ -208,7 +208,7 @@ class CarState(CarStateBase):
     self.scc11 = cp_scc.vl["SCC11"]
     self.scc12 = cp_scc.vl["SCC12"]
     self.mdps12 = cp_mdps.vl["MDPS12"]
-    self.parkBrake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
+    ret.parkBrake = (cp.vl["CGW1"]['CF_Gway_ParkBrakeSw'] != 0)
     self.steer_state = cp_mdps.vl["MDPS12"]['CF_Mdps_ToiActive'] #0 NOT ACTIVE, 1 ACTIVE
     ret.leadDistance = self.lead_distance = cp_scc.vl["SCC11"]['ACC_ObjDist']
     self.Vrel_radar = cp_scc.vl["SCC11"]['ACC_ObjRelSpd']
