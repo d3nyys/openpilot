@@ -21,7 +21,7 @@ class CAR:
   HYUNDAI_GENESIS = "HYUNDAI GENESIS 2015-2016"
   IONIQ_HEV = "HYUNDAI IONIQ HYBRID PREMIUM 2018-2020"
   IONIQ_EV_LTD = "HYUNDAI IONIQ ELECTRIC LIMITED 2019"
-  KONA = "HYUNDAI KONA 2019"
+  KONA = "HYUNDAI KONA 2020"
   KONA_EV = "HYUNDAI KONA ELECTRIC 2019"
   KONA_HEV = "HYUNDAI KONA HEV 2019"
   SANTA_FE = "HYUNDAI SANTA FE LIMITED 2019"
@@ -159,7 +159,7 @@ ECU_FINGERPRINT = {
 }
 
 # Don't use these fingerprints for fingerprinting, they are still used for ECU detection
-IGNORED_FINGERPRINTS = [CAR.KONA, CAR.KIA_FORTE, CAR.KIA_SPORTAGE, CAR.KIA_NIRO_HEV]
+IGNORED_FINGERPRINTS = [CAR.KIA_FORTE, CAR.KIA_SPORTAGE, CAR.KIA_NIRO_HEV]
 
 FW_VERSIONS = {
   CAR.SONATA: {
@@ -312,6 +312,22 @@ FW_VERSIONS = {
     (Ecu.eps, 0x7d4, None): [b'\xf1\x00IK  MDPS R 1.00 1.06 57700-G9420 4I4VL106', ],
     (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\x00IK  MFC  AT USA LHD 1.00 1.01 95740-G9000 170920', ],
     (Ecu.transmission, 0x7e1, None): [b'\xf1\x87VDJLT17895112DN4\x88fVf\x99\x88\x88\x88\x87fVe\x88vhwwUFU\x97eFex\x99\xff\xb7\x82\xf1\x81E25\x00\x00\x00\x00\x00\x00\x00\xf1\x00bcsh8p54  E25\x00\x00\x00\x00\x00\x00\x00SIK0T33NB2\x11\x1am\xda', ],
+  },
+  CAR.KONA: {
+    (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00OS__ SCC F-CUP      1.00 1.00 95655-J9200         \xf1\xa01.00', ],
+    (Ecu.esp, 0x7d1, None): [b'\xf1\x816V5RAK00018.ELF\xf1\x00\x00\x00\x00\x00\x00\x00\xf1\xa01.05', ],
+    (Ecu.engine, 0x7e0, None): [b'"\x01TOS-0NU06F301J02', ],
+    (Ecu.eps, 0x7d4, None): [b'\xf1\x00OS  MDPS C 1.00 1.05 56310J9030\x00 4OSDC105', ],
+    (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\x00OS9 LKAS AT USA LHD 1.00 1.00 95740-J9300 g21', ],
+    (Ecu.transmission, 0x7e1, None): [b'\xf1\x816U2VE051\x00\x00\xf1\x006U2V0_C2\x00\x006U2VE051\x00\x00DOS4T16NS3\x00\x00\x00\x00', ],
+  },
+  CAR.KIA_OPTIMA: {
+    (Ecu.fwdRadar, 0x7d0, None): [b'\xf1\x00JF__ SCC F-CUP      1.00 1.00 96400-D4110         '],
+    (Ecu.esp, 0x7d1, None): [b'\xf1\x00JF ESC \v 11 \x18\x030 58920-D5180',],
+    (Ecu.engine, 0x7e0, None): [b'\x01TJFAJNU06F201H03'],
+    (Ecu.eps, 0x7d4, None): [b'\xf1\x00TM  MDPS C 1.00 1.00 56340-S2000 8409'],
+    (Ecu.fwdCamera, 0x7c4, None): [b'\xf1\x00JFA LKAS AT USA LHD 1.00 1.02 95895-D5000 h31'],
+    (Ecu.transmission, 0x7e1, None): [b'\xf1\x816U2V8051\x00\x00\xf1\x006U2V0_C2\x00\x006U2V8051\x00\x00DJF0T16NL0\t\xd2GW'],
   }
 }
 
@@ -334,7 +350,7 @@ FEATURES = {
               CAR.KIA_FORTE, CAR.KIA_OPTIMA, CAR.KIA_OPTIMA_HEV, CAR.KIA_NIRO_EV, CAR.KIA_CEED, CAR.KIA_CADENZA_HEV,
               CAR.KIA_SPORTAGE, CAR.KONA_HEV, CAR.PALISADE, CAR.GRANDEUR_HEV, CAR.GENESIS_G70, CAR.VELOSTER]),
 
-  "use_bsm": set([CAR.SONATA, CAR.PALISADE, CAR.HYUNDAI_GENESIS, CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.GENESIS_G90]),
+  "use_bsm": set([CAR.SONATA, CAR.PALISADE, CAR.HYUNDAI_GENESIS, CAR.GENESIS_G70, CAR.GENESIS_G80, CAR.GENESIS_G90, CAR.KONA]),
 }
 
 ELEC_VEH = set([CAR.IONIQ_EV_LTD, CAR.KONA_EV, CAR.KIA_NIRO_EV])
