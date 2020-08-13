@@ -262,8 +262,13 @@ static int hyundai_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
         bus_fwd = 20;
     }
     if ((bus_num == 2) && (addr != 832) && (addr != 1157)) {
-      if ((hyundai_mdps_harness_present) && (addr != 1056) && (addr != 1057)) {
-          bus_fwd = 10;
+      if ((hyundai_mdps_harness_present)) {
+          if ((addr != 1056) && (addr != 1057)) {
+            bus_fwd = 10;
+          }
+          else {
+            bus_fwd = 1;
+          }
       }
       else {
         bus_fwd = 0;
