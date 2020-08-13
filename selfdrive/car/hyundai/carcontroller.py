@@ -1,8 +1,5 @@
-from numpy.core._multiarray_umath import square
-
 from cereal import car
 from common.realtime import DT_CTRL
-from common.numpy_fast import clip, interp
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfa_mfa, \
                                              create_scc11, create_scc12
@@ -63,7 +60,6 @@ class CarController():
     self.packer = CANPacker(dbc_name)
     self.accel_steady = 0
     self.steer_rate_limited = False
-    self.lkas11_cnt = 0
     self.scc12_cnt = 0
     self.resume_cnt = 0
     self.last_resume_frame = 0
@@ -191,10 +187,9 @@ class CarController():
       if frame % 2: # send clu11 to mdps if it is not on bus 0
         can_sends.append(create_clu11(self.packer, frame, CS.mdps_bus, CS.clu11, Buttons.NONE, enabled_speed))
 
-    #if pcm_cancel_cmd and not self.longcontrol:
-    #  can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, clu11_speed))
-    #el
-    if CS.out.cruiseState.standstill and not self.longcontrol:
+    if pcm_cancel_cmd and not self.longcontrol:
+      can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, clu11_speed))
+    elif CS.out.cruiseState.standstill and not self.longcontrol:
       # SCC won't resume anyway when the lead distace is less than 3.7m
       # send resume at a max freq of 5Hz
       if CS.lead_distance > 3.7 and (frame - self.last_resume_frame)*DT_CTRL > 0.2:
