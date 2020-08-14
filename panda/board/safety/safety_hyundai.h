@@ -203,7 +203,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   }
 
   // LKA STEER: safety check
-  if ((addr == 832) && (((bus == 1) && hyundai_mdps_harness_present) || (bus == 0))) {
+  if ((addr == 832) && (((bus == 0) && (!hyundai_mdps_harness_present)) || ((bus == 1) && (hyundai_mdps_harness_present)))) {
     int desired_torque = ((GET_BYTES_04(to_send) >> 16) & 0x7ff) - 1024;
     uint32_t ts = TIM2->CNT;
     bool violation = 0;
@@ -230,8 +230,6 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
         rt_torque_last = desired_torque;
         ts_last = ts;
       }
-      puts("desired_torque");
-      violation = 0;
     }
 
     // no torque if controls is not allowed
