@@ -22,9 +22,7 @@ const CanMsg HYUNDAI_TX_MSGS[] = {
 AddrCheckStruct hyundai_rx_checks[] = {
   {.msg = {{902, 0, 8, .check_checksum = false, .max_counter = 15U, .expected_timestep = 10000U}}},
   {.msg = {{916, 0, 8, .check_checksum = true, .max_counter = 7U, .expected_timestep = 10000U}}},
-#if (!hyundai_radar_harness_present)
   {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
-#endif
 };
 const int HYUNDAI_RX_CHECK_LEN = sizeof(hyundai_rx_checks) / sizeof(hyundai_rx_checks[0]);
 
@@ -32,34 +30,32 @@ const int HYUNDAI_RX_CHECK_LEN = sizeof(hyundai_rx_checks) / sizeof(hyundai_rx_c
 AddrCheckStruct hyundai_legacy_rx_checks[] = {
   {.msg = {{902, 0, 8, .expected_timestep = 10000U}}},
   {.msg = {{916, 0, 8, .expected_timestep = 10000U}}},
-#if (!hyundai_radar_harness_present)
-  {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
-#endif
-};
-const int HYUNDAI_LEGACY_RX_CHECK_LEN = sizeof(hyundai_legacy_rx_checks) / sizeof(hyundai_legacy_rx_checks[0]);
-
-AddrCheckStruct hyundai_radar_bus_rx_checks[] = {
 #if (hyundai_radar_harness_present)
   {.msg = {{1057, 2, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
 #else
   {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
 #endif
 };
-
-const int HYUNDAI_RADAR_BUS_RX_CHECK_LEN = sizeof(hyundai_radar_bus_rx_checks) / sizeof(hyundai_radar_bus_rx_checks[0]);
+const int HYUNDAI_LEGACY_RX_CHECK_LEN = sizeof(hyundai_legacy_rx_checks) / sizeof(hyundai_legacy_rx_checks[0]);
 
 bool hyundai_legacy = false;
 
 static uint8_t hyundai_get_counter(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
+  int bus = GET_BUS(to_push);
 
   uint8_t cnt;
   if (addr == 902) {
     cnt = ((GET_BYTE(to_push, 3) >> 6) << 2) | (GET_BYTE(to_push, 1) >> 6);
   } else if (addr == 916) {
     cnt = (GET_BYTE(to_push, 1) >> 5) & 0x7;
-  } else if (addr == 1057) {
+#if (hyundai_radar_harness_present)
+  } else if ((addr == 1057) && (bus == 2)){
     cnt = GET_BYTE(to_push, 7) & 0xF;
+#else
+  } else if ((addr == 1057) && (bus == 0)){
+    cnt = GET_BYTE(to_push, 7) & 0xF;
+#endif
   } else {
     cnt = 0;
   }
@@ -73,8 +69,13 @@ static uint8_t hyundai_get_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
   uint8_t chksum;
   if (addr == 916) {
     chksum = GET_BYTE(to_push, 6) & 0xF;
-  } else if (addr == 1057) {
+#if (hyundai_radar_harness_present)
+  } else if ((addr == 1057) && (bus == 2)){
     chksum = GET_BYTE(to_push, 7) >> 4;
+#else
+  } else if ((addr == 1057) && (bus == 0)){
+    chksum = GET_BYTE(to_push, 7) >> 4;
+#endif
   } else {
     chksum = 0;
   }
@@ -88,8 +89,14 @@ static uint8_t hyundai_compute_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
   // same algorithm, but checksum is in a different place
   for (int i = 0; i < 8; i++) {
     uint8_t b = GET_BYTE(to_push, i);
-    if (((addr == 916) && (i == 6)) || ((addr == 1057) && (i == 7))) {
-      b &= (addr == 1057) ? 0x0FU : 0xF0U; // remove checksum
+    if (((addr == 916) && (i == 6))
+#if (hyundai_radar_harness_present)
+    || ((addr == 1057) && (i == 7) && (bus == 2))) {
+     b &= ((addr == 1057) && (bus == 2)) ? 0x0FU : 0xF0U; // remove checksum
+#else
+    || ((addr == 1057) && (i == 7) && (bus == 0))) {
+     b &= ((addr == 1057) && (bus == 0)) ? 0x0FU : 0xF0U; // remove checksum
+#endif
     }
     chksum += (b % 16U) + (b / 16U);
   }
@@ -99,37 +106,19 @@ static uint8_t hyundai_compute_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
 static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   bool valid;
-
-  int addr = GET_ADDR(to_push);
-  int bus = GET_BUS(to_push);
-
   if (hyundai_legacy) {
     valid = addr_safety_check(to_push, hyundai_legacy_rx_checks, HYUNDAI_LEGACY_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
-#if ((hyundai_radar_harness_present) && (bus == 2))
-    valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
-                              hyundai_get_checksum, hyundai_compute_checksum,
-                              hyundai_get_counter);
-#else
-    valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
-                              hyundai_get_checksum, hyundai_compute_checksum,
-                              hyundai_get_counter);
-#endif
+
   } else {
     valid = addr_safety_check(to_push, hyundai_rx_checks, HYUNDAI_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
-#if ((hyundai_radar_harness_present) && (bus == 2))
-    valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
-                              hyundai_get_checksum, hyundai_compute_checksum,
-                              hyundai_get_counter);
-#else
-    valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
-                              hyundai_get_checksum, hyundai_compute_checksum,
-                              hyundai_get_counter);
-#endif
   }
+
+  int addr = GET_ADDR(to_push);
+  int bus = GET_BUS(to_push);
 
   if (valid && (bus == 1) && hyundai_mdps_harness_present) {
 
