@@ -68,6 +68,7 @@ static uint8_t hyundai_get_counter(CAN_FIFOMailBox_TypeDef *to_push) {
 
 static uint8_t hyundai_get_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
+  int bus = GET_BUS(to_push);
 
   uint8_t chksum;
   if (addr == 916) {
@@ -98,25 +99,37 @@ static uint8_t hyundai_compute_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
 static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   bool valid;
+
+  int addr = GET_ADDR(to_push);
+  int bus = GET_BUS(to_push);
+
   if (hyundai_legacy) {
     valid = addr_safety_check(to_push, hyundai_legacy_rx_checks, HYUNDAI_LEGACY_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
+#if ((hyundai_radar_harness_present) && (bus == 2))
     valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
-
+#else
+    valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
+                              hyundai_get_checksum, hyundai_compute_checksum,
+                              hyundai_get_counter);
+#endif
   } else {
     valid = addr_safety_check(to_push, hyundai_rx_checks, HYUNDAI_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
+#if ((hyundai_radar_harness_present) && (bus == 2))
     valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
+#else
+    valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
+                              hyundai_get_checksum, hyundai_compute_checksum,
+                              hyundai_get_counter);
+#endif
   }
-
-  int addr = GET_ADDR(to_push);
-  int bus = GET_BUS(to_push);
 
   if (valid && (bus == 1) && hyundai_mdps_harness_present) {
 
