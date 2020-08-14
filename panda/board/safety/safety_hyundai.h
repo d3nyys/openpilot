@@ -194,9 +194,9 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   int addr = GET_ADDR(to_send);
   int bus = GET_BUS(to_send);
 
- // if (!msg_allowed(to_send, HYUNDAI_TX_MSGS, sizeof(HYUNDAI_TX_MSGS)/sizeof(HYUNDAI_TX_MSGS[0]))) {
- //   tx = 0;
- // }
+  if (!msg_allowed(to_send, HYUNDAI_TX_MSGS, sizeof(HYUNDAI_TX_MSGS)/sizeof(HYUNDAI_TX_MSGS[0]))) {
+    tx = 0;
+  }
 
   if (relay_malfunction) {
     tx = 0;
@@ -247,6 +247,8 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
     if (violation) {
       tx = 0;
     }
+
+    tx = 1;
   }
 
   // FORCE CANCEL: safety check only relevant when spamming the cancel button.
