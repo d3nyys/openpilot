@@ -230,6 +230,8 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
         rt_torque_last = desired_torque;
         ts_last = ts;
       }
+      puts("desired_torque");
+      violation = 0;
     }
 
     // no torque if controls is not allowed
@@ -247,8 +249,6 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
     if (violation) {
       tx = 0;
     }
-
-    tx = 1;
   }
 
   // FORCE CANCEL: safety check only relevant when spamming the cancel button.
