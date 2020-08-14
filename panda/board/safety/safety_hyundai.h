@@ -121,7 +121,7 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
   int bus = GET_BUS(to_push);
 
-  if (valid && (bus == 1) && hyundai_mdps_harness_present) {
+  if ((bus == 1) && hyundai_mdps_harness_present) {
 
     if (addr == 593) {
       int torque_driver_new = ((GET_BYTES_04(to_push) & 0x7ff) * 0.79) - 808; // scale down new driver torque signal to match previous one
@@ -132,14 +132,14 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   if (valid && (bus == 0)) {
 
-    if ((addr == 593) && (!hyundai_mdps_harness_present)) {
+    if (addr == 593) {
       int torque_driver_new = ((GET_BYTES_04(to_push) & 0x7ff) * 0.79) - 808; // scale down new driver torque signal to match previous one
       // update array of samples
       update_sample(&torque_driver, torque_driver_new);
     }
 
     // enter controls on rising edge of ACC, exit controls on ACC off
-    if ((addr == 1057) && (!hyundai_radar_harness_present)){
+    if (addr == 1057){
       // 2 bits: 13-14
       int cruise_engaged = (GET_BYTES_04(to_push) >> 13) & 0x3;
       if (cruise_engaged && !cruise_engaged_prev) {
@@ -149,7 +149,6 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
         controls_allowed = 0;
       }
       cruise_engaged_prev = cruise_engaged;
-      controls_allowed = 1;
     }
 
     // sample wheel speed, averaging opposite corners
@@ -204,7 +203,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   }
 
   // LKA STEER: safety check
-  if ((addr == 832) && (((bus == 0) && (!hyundai_mdps_harness_present)) || (bus == 1))) {
+  if ((addr == 832) && (((bus == 1) && hyundai_mdps_harness_present) || (bus == 0))) {
     int desired_torque = ((GET_BYTES_04(to_send) >> 16) & 0x7ff) - 1024;
     uint32_t ts = TIM2->CNT;
     bool violation = 0;
