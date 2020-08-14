@@ -92,12 +92,10 @@ def create_lfa_mfa(packer, frame, enabled):
 
   return packer.make_can_msg("LFAHDA_MFC", 0, values)
 
-def create_scc11(packer, frame, enabled, set_speed, lead_visible, gapsetting, standstill, scc11, oplong):
+def create_scc11(packer, enabled, set_speed, lead_visible, gapsetting, standstill, scc11, oplong):
   values = scc11
 
   if oplong:
-    #values["MainMode_ACC"] = 1 # let radar handle this
-    values["AliveCounterACC"] = frame // 2 % 0x10
     if enabled:
       values["VSetDis"] = set_speed
     if standstill:
@@ -109,7 +107,7 @@ def create_scc11(packer, frame, enabled, set_speed, lead_visible, gapsetting, st
 
   return packer.make_can_msg("SCC11", 0, values)
 
-def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, cnt, scc12, oplong):
+def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, scc12, oplong):
   values = scc12
 
   if oplong:
@@ -126,7 +124,6 @@ def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, 
     else:
       values["aReqRaw"] = 0
       values["aReqValue"] = 0
-    values["CR_VSM_Alive"] = cnt
     values["CR_VSM_ChkSum"] = 0
 
     dat = packer.make_can_msg("SCC12", 0, values)[2]

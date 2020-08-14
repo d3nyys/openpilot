@@ -61,7 +61,6 @@ class CarController():
     self.packer = CANPacker(dbc_name)
     self.accel_steady = 0
     self.steer_rate_limited = False
-    self.scc12_cnt = 0
     self.resume_cnt = 0
     self.last_resume_frame = 0
     self.last_lead_distance = 0
@@ -166,13 +165,6 @@ class CarController():
     else:
       set_speed *= CV.MS_TO_KPH
 
-    if frame == 0: # initialize counts from last received count signals
-      self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1 if not CS.no_radar else 0
-
-    self.prev_scc_cnt = CS.scc11["AliveCounterACC"]
-
-    self.scc12_cnt %= 0xF
-
     can_sends = []
     can_sends.append(create_lkas11(self.packer, frame, self.car_fingerprint, apply_steer, lkas_active,
                                    CS.lkas11, sys_warning, sys_state, enabled,
@@ -185,8 +177,7 @@ class CarController():
                                    left_lane, right_lane,
                                    left_lane_warning, right_lane_warning, self.lfa_available, 1))
 
-      if frame % 2: # send clu11 to mdps if it is not on bus 0
-        can_sends.append(create_clu11(self.packer, frame, CS.mdps_bus, CS.clu11, Buttons.NONE, enabled_speed))
+      can_sends.append(create_clu11(self.packer, frame, CS.mdps_bus, CS.clu11, Buttons.NONE, enabled_speed))
 
     if pcm_cancel_cmd and not self.longcontrol:
       can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, clu11_speed))
@@ -213,13 +204,12 @@ class CarController():
 
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     if CS.scc_bus == 2:
-        if frame % 2 == 0:
           can_sends.append(create_scc12(self.packer, apply_accel, enabled,
                                     self.acc_standstill, self.acc_paused,
                                     CS.out.cruiseMainbutton,
-                                    self.scc12_cnt, CS.scc12, self.longcontrol))
+                                    CS.scc12, self.longcontrol))
 
-          can_sends.append(create_scc11(self.packer, frame, enabled,
+          can_sends.append(create_scc11(self.packer, enabled,
                                     set_speed, self.lead_visible,
                                     self.gapsettingdance,
                                     CS.out.standstill, CS.scc11, self.longcontrol))
