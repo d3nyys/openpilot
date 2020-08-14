@@ -211,7 +211,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
     if (controls_allowed) {
 
       // *** global torque limit check ***
-      violation |= max_limit_check(desired_torque, HYUNDAI_MAX_STEER, -HYUNDAI_MAX_STEER);
+     // violation |= max_limit_check(desired_torque, HYUNDAI_MAX_STEER, -HYUNDAI_MAX_STEER);
 
       // *** torque rate limit check ***
       violation |= driver_limit_check(desired_torque, desired_torque_last, &torque_driver,
