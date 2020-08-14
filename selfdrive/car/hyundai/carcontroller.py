@@ -9,6 +9,7 @@ from opendbc.can.packer import CANPacker
 from selfdrive.config import Conversions as CV
 from selfdrive.controls.lib.longcontrol import LongCtrlState
 from selfdrive.controls.lib.pathplanner import LANE_CHANGE_SPEED_MIN
+from common.numpy_fast import clip
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 

@@ -22,7 +22,9 @@ const CanMsg HYUNDAI_TX_MSGS[] = {
 AddrCheckStruct hyundai_rx_checks[] = {
   {.msg = {{902, 0, 8, .check_checksum = false, .max_counter = 15U, .expected_timestep = 10000U}}},
   {.msg = {{916, 0, 8, .check_checksum = true, .max_counter = 7U, .expected_timestep = 10000U}}},
+#if (!hyundai_radar_harness_present)
   {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
+#endif
 };
 const int HYUNDAI_RX_CHECK_LEN = sizeof(hyundai_rx_checks) / sizeof(hyundai_rx_checks[0]);
 
@@ -30,13 +32,21 @@ const int HYUNDAI_RX_CHECK_LEN = sizeof(hyundai_rx_checks) / sizeof(hyundai_rx_c
 AddrCheckStruct hyundai_legacy_rx_checks[] = {
   {.msg = {{902, 0, 8, .expected_timestep = 10000U}}},
   {.msg = {{916, 0, 8, .expected_timestep = 10000U}}},
-#if (hyundai_radar_harness_present)
-    {.msg = {{1057, 2, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
-#else
-    {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
+#if (!hyundai_radar_harness_present)
+  {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
 #endif
 };
 const int HYUNDAI_LEGACY_RX_CHECK_LEN = sizeof(hyundai_legacy_rx_checks) / sizeof(hyundai_legacy_rx_checks[0]);
+
+AddrCheckStruct hyundai_radar_bus_rx_checks[] = {
+#if (hyundai_radar_harness_present)
+  {.msg = {{1057, 2, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
+#else
+  {.msg = {{1057, 0, 8, .check_checksum = true, .max_counter = 15U, .expected_timestep = 20000U}}},
+#endif
+};
+
+const int HYUNDAI_RADAR_BUS_RX_CHECK_LEN = sizeof(hyundai_radar_bus_rx_checks) / sizeof(hyundai_radar_bus_rx_checks[0]);
 
 bool hyundai_legacy = false;
 
@@ -92,9 +102,15 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     valid = addr_safety_check(to_push, hyundai_legacy_rx_checks, HYUNDAI_LEGACY_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
+    valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
+                              hyundai_get_checksum, hyundai_compute_checksum,
+                              hyundai_get_counter);
 
   } else {
     valid = addr_safety_check(to_push, hyundai_rx_checks, HYUNDAI_RX_CHECK_LEN,
+                              hyundai_get_checksum, hyundai_compute_checksum,
+                              hyundai_get_counter);
+    valid &= addr_safety_check(to_push, hyundai_radar_bus_rx_checks, HYUNDAI_RADAR_BUS_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
   }
