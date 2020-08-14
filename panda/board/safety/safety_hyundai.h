@@ -230,6 +230,7 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
         rt_torque_last = desired_torque;
         ts_last = ts;
       }
+      violation = 0;
     }
 
     // no torque if controls is not allowed
