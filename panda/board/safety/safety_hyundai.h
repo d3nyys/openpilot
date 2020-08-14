@@ -84,6 +84,7 @@ static uint8_t hyundai_get_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
 
 static uint8_t hyundai_compute_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
+  int bus = GET_BUS(to_push);
 
   uint8_t chksum = 0;
   // same algorithm, but checksum is in a different place
