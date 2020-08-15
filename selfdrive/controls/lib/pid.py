@@ -5,7 +5,7 @@ TR_DBP = [4., 12., 30., 50.]
 TR_DT = [5., 1., .5, .2]
 
 GainSaS_BP = [0., 2., 5., 10.]
-Gain_g = [0., .01, .02, .03]
+Gain_g = [0., .01, .02, .07]
 
 GainV_BP = [0., 25., 25.01, 30.]
 Gain_V = [0., .01, .5, 1.]
@@ -72,7 +72,7 @@ class PIController:
   def update(self, setpoint, measurement, speed=0.0, check_saturation=True, override=False, feedforward=0., deadzone=0., freeze_integrator=False):
     self.speed = speed
 
-    self.nl_p = 0 #interp(abs(setpoint), GainSaS_BP, Gain_g) * interp(self.speed, GainV_BP, Gain_V)
+    self.nl_p = interp(abs(setpoint), GainSaS_BP, Gain_g) * interp(self.speed, GainV_BP, Gain_V)
 
     error = float(apply_deadzone(setpoint - measurement, deadzone))
     self.p = error * (self.k_p + self.nl_p)
