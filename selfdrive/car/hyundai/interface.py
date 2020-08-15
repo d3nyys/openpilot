@@ -34,8 +34,8 @@ class CarInterface(CarInterfaceBase):
     # Most Hyundai car ports are community features for now
     ret.communityFeature = candidate not in [CAR.SONATA]
 
-    ret.steerActuatorDelay = 0.35  # Default delay
-    ret.steerRateCost = 0.5
+    ret.steerActuatorDelay = 0.01  # Default delay
+    ret.steerRateCost = 0.4
     ret.steerLimitTimer = 0.8
     tire_stiffness_factor = 1.
 
@@ -56,11 +56,11 @@ class CarInterface(CarInterfaceBase):
     ret.longitudinalTuning.kfV = [1., 1., 1.3, .9, .2]
 
     ret.lateralTuning.pid.kiBP = [0., 10., 30.]
-    ret.lateralTuning.pid.kpV = [0.04, 0.08, 0.13]
+    ret.lateralTuning.pid.kpV = [0.04, 0.05, 0.6]
     ret.lateralTuning.pid.kpBP = [0., 10., 30.]
-    ret.lateralTuning.pid.kiV = [0.001, 0.003, 0.005]
+    ret.lateralTuning.pid.kiV = [0.001, 0.003, 0.004]
     ret.lateralTuning.pid.kfBP = [0., 10., 30.]
-    ret.lateralTuning.pid.kfV = [0.00002, 0.00003, 0.00005]
+    ret.lateralTuning.pid.kfV = [0.00002, 0.00003, 0.00004]
 
 
     if candidate == CAR.SANTA_FE:

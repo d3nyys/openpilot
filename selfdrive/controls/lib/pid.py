@@ -4,6 +4,12 @@ from common.numpy_fast import clip, interp
 TR_DBP = [4., 12., 30., 50.]
 TR_DT = [5., 1., .5, .2]
 
+GainSaS_BP = [0., 2., 5., 10.]
+Gain_g = [0., .1, .2, .7]
+
+GainV_BP = [0., 2., 10., 30.]
+Gain_V = [0., .1, .5, 1.]
+
 def apply_deadzone(error, deadzone):
   if error > deadzone:
     error -= deadzone
@@ -66,8 +72,10 @@ class PIController:
   def update(self, setpoint, measurement, speed=0.0, check_saturation=True, override=False, feedforward=0., deadzone=0., freeze_integrator=False):
     self.speed = speed
 
+    self.nl_p = interp(abs(setpoint), GainSaS_BP, Gain_g) * interp(self.speed, GainV_BP, Gain_V)
+
     error = float(apply_deadzone(setpoint - measurement, deadzone))
-    self.p = error * self.k_p
+    self.p = error * (self.k_p + self.nl_p)
     self.f = feedforward * self.k_f
 
     if override:
