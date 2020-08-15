@@ -124,12 +124,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
 struct CarState {
   errorsDEPRECATED @0 :List(CarEvent.EventName);
   events @13 :List(CarEvent);
-
-  leadDistance @37 : Float32;
-  tempOplongdisable @ 41 :Bool;
-  leadvisible @42 :Bool;
-  cruiseMainbutton @43 :Bool;
-
   # car speed
   vEgo @1 :Float32;         # best estimate of speed
   aEgo @16 :Float32;        # best estimate of acceleration
@@ -146,8 +140,12 @@ struct CarState {
   brake @5 :Float32;      # this is user pedal only
   brakePressed @6 :Bool;  # this is user pedal only
   brakeLights @19 :Bool;
+  leadDistance @37 : Float32;
   brakeHold @38 :Bool;
   parkBrake @39 :Bool;
+  tempOplongdisable @ 40 :Bool;
+  leadvisible @41 :Bool;
+  cruiseMainbutton @42 :Bool;
 
   # steering wheel
   steeringAngle @7 :Float32;       # deg
