@@ -5,10 +5,10 @@ TR_DBP = [4., 12., 30., 50.]
 TR_DT = [5., 1., .5, .2]
 
 GainSaS_BP = [0., 2., 5., 10.]
-Gain_g = [0., .01, .02, .08]
+Gain_g = [0., .01, .08, .12]
 
 GainV_BP = [0., 10., 10.01, 30.]
-Gain_V = [0., .01, .5, 1.]
+Gain_V = [0.3, .6, .9, 1.]
 
 def apply_deadzone(error, deadzone):
   if error > deadzone:
