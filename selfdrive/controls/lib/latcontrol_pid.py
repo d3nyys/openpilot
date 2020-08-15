@@ -37,7 +37,7 @@ class LatControlPID():
         steer_feedforward *= CS.vEgo**2  # proportional to realigning tire momentum (~ lateral accel)
       
       if CS.vEgo > 25.:
-        deadzone = 1.5      
+        deadzone = .5      
       else:
         deadzone = 0.
 
