@@ -57,10 +57,10 @@ class CarInterface(CarInterfaceBase):
 
     ret.lateralTuning.pid.kiBP = [0., 2.]
     ret.lateralTuning.pid.kpV = [0.01, 0.01]
-    ret.lateralTuning.pid.kpBP = [0., 25.]
-    ret.lateralTuning.pid.kiV = [0.001, 0.005]
+    ret.lateralTuning.pid.kpBP = [0., 10., 30.]
+    ret.lateralTuning.pid.kiV = [0.001, 0.003, 0.005]
     ret.lateralTuning.pid.kfBP = [0., 10., 30.]
-    ret.lateralTuning.pid.kfV = [0.00002, 0.00004, 0.00005]
+    ret.lateralTuning.pid.kfV = [0.00002, 0.00003, 0.00005]
 
 
     if candidate == CAR.SANTA_FE:
@@ -97,7 +97,7 @@ class CarInterface(CarInterfaceBase):
       ret.steerRateCost = 0.45
       ret.mass = 2060. + STD_CARGO_KG
       ret.wheelbase = 3.01
-      ret.steerRatio = 13.5
+      ret.steerRatio = 16.5
       ret.minSteerSpeed = 55 * CV.KPH_TO_MS
     elif candidate == CAR.GENESIS_G70: 
       ret.mass = 1640. + STD_CARGO_KG 
