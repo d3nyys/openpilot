@@ -125,7 +125,7 @@ class CarController():
       apply_steer = 0
 
     self.prev_longcontrol = self.longcontrol
-    if CS.lkas_button_on:
+    if CS.lkas_button_on or CS.brakeUnavailable:
       if not CS.rawcruiseStateavailable:
         self.longcontrol = True
       else:

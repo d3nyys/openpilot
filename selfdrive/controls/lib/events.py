@@ -722,16 +722,6 @@ EVENTS = {
     ET.NO_ENTRY: NoEntryAlert("Turn off Car to sleep and Restart"),
   },
 
-  EventName.brakeUnavailable: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Cruise Fault: Restart the Car"),
-    ET.PERMANENT: Alert(
-      "Cruise Fault: Restart the car to engage",
-      "",
-      AlertStatus.normal, AlertSize.small,
-      Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., .2),
-    ET.NO_ENTRY: NoEntryAlert("Cruise Fault: Restart the Car"),
-  },
-
   EventName.gasUnavailable: {
     ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Gas Fault: Restart the Car"),
     ET.NO_ENTRY: NoEntryAlert("Gas Error: Restart the Car"),
