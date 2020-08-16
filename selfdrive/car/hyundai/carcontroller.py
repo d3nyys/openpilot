@@ -57,6 +57,7 @@ class CarController():
   def __init__(self, dbc_name, CP, VM):
     self.apply_steer_last = 0
     self.car_fingerprint = CP.carFingerprint
+    self.cp_opcontrol = CP.openpilotLongitudinalControl
     self.steermaxLimit = int(CP.steermaxLimit)
     self.packer = CANPacker(dbc_name)
     self.accel_steady = 0
@@ -125,7 +126,7 @@ class CarController():
       apply_steer = 0
 
     self.prev_longcontrol = self.longcontrol
-    if CS.lkas_button_on or CS.brakeUnavailable:
+    if CS.lkas_button_on and not CS.brakeUnavailable and self.cp_opcontrol:
       if not CS.rawcruiseStateavailable:
         self.longcontrol = True
       else:
