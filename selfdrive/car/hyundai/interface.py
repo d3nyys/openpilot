@@ -269,7 +269,7 @@ class CarInterface(CarInterfaceBase):
 
     events = self.create_common_events(ret)
 
-    if self.CC.acc_paused_due_brake and not self.CC.prev_acc_paused_due_brake:
+    if self.CC.acc_paused_due_brake and not self.CC.prev_acc_paused_due_brake and ret.openpilotLongitudinalControl:
       events.add(EventName.opLongdisabled)
     if self.lkas_button_alert:
       events.add(EventName.lkasButtonOff)
