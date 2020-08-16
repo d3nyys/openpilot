@@ -98,11 +98,17 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
     }
+    else {
+      valid = 1;
+    }
   } else {
     if (((hyundai_radar_harness_present) && (bus == 2) && (addr == 1057)) || (bus != 2)) { 
       valid = addr_safety_check(to_push, hyundai_rx_checks, HYUNDAI_RX_CHECK_LEN,
                               hyundai_get_checksum, hyundai_compute_checksum,
                               hyundai_get_counter);
+    }
+    else {
+      valid = 1;
     }
   }
 
