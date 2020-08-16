@@ -10,8 +10,8 @@ const CanMsg HYUNDAI_TX_MSGS[] = {
   {832, 0, 8}, {832, 1, 8}, // LKAS11 Bus 0, 1
   {1265, 0, 4}, {1265, 1, 4}, // CLU11 Bus 0, 1
   {1157, 0, 4}, // LFAHDA_MFC Bus 0
-  {1056, 0, 8}, {1056, 1, 8}, //   SCC11,  Bus 0, 1
-  {1057, 0, 8}, {1057, 1, 8},//   SCC12,  Bus 0, 1
+  {1056, 0, 8}, //   SCC11,  Bus 0
+  {1057, 0, 8}, //   SCC12,  Bus 0
   // {1290, 0, 8}, //   SCC13,  Bus 0
   // {905, 0, 8},  //   SCC14,  Bus 0
   // {1186, 0, 8}  //   4a2SCC, Bus 0
@@ -42,20 +42,14 @@ bool hyundai_legacy = false;
 
 static uint8_t hyundai_get_counter(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
-  int bus = GET_BUS(to_push);
 
   uint8_t cnt;
   if (addr == 902) {
     cnt = ((GET_BYTE(to_push, 3) >> 6) << 2) | (GET_BYTE(to_push, 1) >> 6);
   } else if (addr == 916) {
     cnt = (GET_BYTE(to_push, 1) >> 5) & 0x7;
-#if (hyundai_radar_harness_present)
-  } else if ((addr == 1057) && (bus == 2)){
+  } else if (addr == 1057) {
     cnt = GET_BYTE(to_push, 7) & 0xF;
-#else
-  } else if ((addr == 1057) && (bus == 0)){
-    cnt = GET_BYTE(to_push, 7) & 0xF;
-#endif
   } else {
     cnt = 0;
   }
@@ -64,18 +58,12 @@ static uint8_t hyundai_get_counter(CAN_FIFOMailBox_TypeDef *to_push) {
 
 static uint8_t hyundai_get_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
-  int bus = GET_BUS(to_push);
 
   uint8_t chksum;
   if (addr == 916) {
     chksum = GET_BYTE(to_push, 6) & 0xF;
-#if (hyundai_radar_harness_present)
-  } else if ((addr == 1057) && (bus == 2)){
+  } else if (addr == 1057) {
     chksum = GET_BYTE(to_push, 7) >> 4;
-#else
-  } else if ((addr == 1057) && (bus == 0)){
-    chksum = GET_BYTE(to_push, 7) >> 4;
-#endif
   } else {
     chksum = 0;
   }
@@ -84,20 +72,13 @@ static uint8_t hyundai_get_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
 
 static uint8_t hyundai_compute_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
   int addr = GET_ADDR(to_push);
-  int bus = GET_BUS(to_push);
 
   uint8_t chksum = 0;
   // same algorithm, but checksum is in a different place
   for (int i = 0; i < 8; i++) {
     uint8_t b = GET_BYTE(to_push, i);
-    if (((addr == 916) && (i == 6))
-#if (hyundai_radar_harness_present)
-    || ((addr == 1057) && (i == 7) && (bus == 2))) {
-     b &= ((addr == 1057) && (bus == 2)) ? 0x0FU : 0xF0U; // remove checksum
-#else
-    || ((addr == 1057) && (i == 7) && (bus == 0))) {
-     b &= ((addr == 1057) && (bus == 0)) ? 0x0FU : 0xF0U; // remove checksum
-#endif
+    if (((addr == 916) && (i == 6)) || ((addr == 1057) && (i == 7))) {
+      b &= (addr == 1057) ? 0x0FU : 0xF0U; // remove checksum
     }
     chksum += (b % 16U) + (b / 16U);
   }
@@ -107,19 +88,24 @@ static uint8_t hyundai_compute_checksum(CAN_FIFOMailBox_TypeDef *to_push) {
 static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   bool valid;
-  if (hyundai_legacy) {
-    valid = addr_safety_check(to_push, hyundai_legacy_rx_checks, HYUNDAI_LEGACY_RX_CHECK_LEN,
-                              hyundai_get_checksum, hyundai_compute_checksum,
-                              hyundai_get_counter);
-
-  } else {
-    valid = addr_safety_check(to_push, hyundai_rx_checks, HYUNDAI_RX_CHECK_LEN,
-                              hyundai_get_checksum, hyundai_compute_checksum,
-                              hyundai_get_counter);
-  }
 
   int addr = GET_ADDR(to_push);
   int bus = GET_BUS(to_push);
+
+  if (hyundai_legacy) {
+    if (((hyundai_radar_harness_present) && (bus == 2) && (addr == 1057)) || (bus != 2)) { 
+      valid = addr_safety_check(to_push, hyundai_legacy_rx_checks, HYUNDAI_LEGACY_RX_CHECK_LEN,
+                              hyundai_get_checksum, hyundai_compute_checksum,
+                              hyundai_get_counter);
+    }
+  } else {
+    if (((hyundai_radar_harness_present) && (bus == 2) && (addr == 1057)) || (bus != 2)) { 
+      valid = addr_safety_check(to_push, hyundai_rx_checks, HYUNDAI_RX_CHECK_LEN,
+                              hyundai_get_checksum, hyundai_compute_checksum,
+                              hyundai_get_counter);
+    }
+  }
+
 
   if ((bus == 1) && hyundai_mdps_harness_present) {
 
@@ -132,14 +118,14 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
   if (valid && (bus == 0)) {
 
-    if ((addr == 593) && (!hyundai_mdps_harness_present)){
+    if (addr == 593) {
       int torque_driver_new = ((GET_BYTES_04(to_push) & 0x7ff) * 0.79) - 808; // scale down new driver torque signal to match previous one
       // update array of samples
       update_sample(&torque_driver, torque_driver_new);
     }
 
     // enter controls on rising edge of ACC, exit controls on ACC off
-    if ((addr == 1057) && (!hyundai_radar_harness_present)){
+    if (addr == 1057) {
       // 2 bits: 13-14
       int cruise_engaged = (GET_BYTES_04(to_push) >> 13) & 0x3;
       if (cruise_engaged && !cruise_engaged_prev) {
@@ -168,21 +154,19 @@ static int hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     generic_rx_checks((addr == 832));
   }
 
-  if (valid && (bus == 2) && hyundai_radar_harness_present) {
+  if (valid && (bus == 2) && hyundai_radar_harness_present && (addr == 1057)) {
 
     // enter controls on rising edge of ACC, exit controls on ACC off
-    if (addr == 1057){
       // 2 bits: 13-14
-      int cruise_engaged = GET_BYTES_04(to_push) & 0x1; // ACC main_on signal
-      if (cruise_engaged && !cruise_engaged_prev) {
-        controls_allowed = 1;
-      }
-      if (!cruise_engaged) {
-        controls_allowed = 0;
-      }
-      cruise_engaged_prev = cruise_engaged;
+    int cruise_engaged = GET_BYTES_04(to_push) & 0x1; // ACC main_on signal
+    if (cruise_engaged && !cruise_engaged_prev) {
       controls_allowed = 1;
     }
+    if (!cruise_engaged) {
+      controls_allowed = 0;
+    }
+    cruise_engaged_prev = cruise_engaged;
+    controls_allowed = 1;
   }
 
   return valid;
@@ -230,12 +214,11 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
         rt_torque_last = desired_torque;
         ts_last = ts;
       }
-      violation = 0;
     }
 
     // no torque if controls is not allowed
     if (!controls_allowed && (desired_torque != 0)) {
-      violation = 0;
+      violation = 1;
     }
 
     // reset to 0 if either controls is not allowed or there's a violation
