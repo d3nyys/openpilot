@@ -14,7 +14,7 @@ int default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
     }
   }
   // check if we have a SCC on Bus2
-  /*
+
   if ((addr == 1056) && (addr == 1057)) {
     if (bus == 2) {
       hyundai_radar_harness_present = true;
@@ -23,7 +23,7 @@ int default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
       hyundai_radar_harness_present = false;
     }
   }
-  */
+
   return true;
 }
 
