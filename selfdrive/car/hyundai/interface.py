@@ -99,10 +99,19 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 3.01
       ret.steerRatio = 16.5
       ret.minSteerSpeed = 55 * CV.KPH_TO_MS
-    elif candidate == CAR.GENESIS_G70: 
-      ret.mass = 1640. + STD_CARGO_KG 
-      ret.wheelbase = 2.84 
-      ret.steerRatio = 16.5 
+    elif candidate == CAR.GENESIS_G70:
+      ret.lateralTuning.init('indi')
+      ret.lateralTuning.indi.innerLoopGain = 3.0
+      ret.lateralTuning.indi.outerLoopGain = 2.0
+      ret.lateralTuning.indi.timeConstant = 1.0
+      ret.lateralTuning.indi.actuatorEffectiveness = 1.5
+      ret.steerActuatorDelay = 0.08
+      ret.steerLimitTimer = 0.4
+      tire_stiffness_factor = 1.125
+      ret.steerRateCost = 1.0
+      ret.mass = 1640.0 + STD_CARGO_KG
+      ret.wheelbase = 2.84
+      ret.steerRatio = 13.56
     elif candidate == CAR.GENESIS_G80:
       ret.steerActuatorDelay = 0.4
       ret.steerRateCost = 0.45
@@ -136,15 +145,11 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.7
       ret.steerRatio = 13.73 * 1.15 # Spec
       tire_stiffness_factor = 0.385
-      ret.lateralTuning.pid.kfBP = [0., 30.]
-      ret.lateralTuning.pid.kfV = [0.00003, 0.00006]
     elif candidate in [CAR.IONIQ_HEV, CAR.IONIQ_EV_LTD]:
       ret.mass = 1490. + STD_CARGO_KG   #weight per hyundai site https://www.hyundaiusa.com/ioniq-electric/specifications.aspx
       ret.wheelbase = 2.7
       ret.steerRatio = 13.73 * 1.15   #Spec
       tire_stiffness_factor = 0.385
-      ret.lateralTuning.pid.kfBP = [0., 30.]
-      ret.lateralTuning.pid.kfV = [0.00003, 0.00006]
     elif candidate == CAR.KIA_FORTE:
       ret.mass = 3558. * CV.LB_TO_KG
       ret.wheelbase = 2.80
@@ -160,8 +165,8 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.78
       ret.steerRatio = 14.4 * 1.1   # 10% higher at the center seems reasonable
     elif candidate == CAR.VELOSTER:
-      ret.mass = 3558. + CV.LB_TO_KG
-      ret.wheelbase = 2.80
+      ret.mass = 2960. * CV.LB_TO_KG
+      ret.wheelbase = 2.69
       ret.steerRatio = 13.75 * 1.15
     elif candidate in [CAR.KIA_NIRO_HEV, CAR.KIA_NIRO_EV]:
       ret.steerRatio = 13.73
