@@ -293,7 +293,7 @@ class CarInterface(CarInterfaceBase):
         events.add(EventName.buttonEnable)
         self.countenable += 1
       # do disable on button down
-      if b.type == ButtonType.cancel and b.pressed:
+      if b.type == ButtonType.cancel and b.pressed and not self.CC.longcontrol:
         events.add(EventName.buttonCancel)
       if b.type == ButtonType.altButton3 and b.pressed:
         events.add(EventName.pcmDisable)

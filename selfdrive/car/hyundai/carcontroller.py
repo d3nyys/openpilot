@@ -125,14 +125,8 @@ class CarController():
     if not lkas_active:
       apply_steer = 0
 
-    self.prev_longcontrol = self.longcontrol
-    if CS.lkas_button_on and not CS.brakeUnavailable and self.cp_opcontrol:
-      if not CS.rawcruiseStateavailable:
-        self.longcontrol = True
-      else:
-        self.longcontrol = self.prev_longcontrol
-    else:
-      self.longcontrol = False
+    if (CS.cancel_button_count == 3) and not CS.brakeUnavailable and self.cp_opcontrol:
+      self.longcontrol = not self.longcontrol
 
     if self.longcontrol:
       self.gapcount += 1

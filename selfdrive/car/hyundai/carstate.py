@@ -16,10 +16,9 @@ class CarState(CarStateBase):
     self.mdps_bus = CP.mdpsBus
     self.sas_bus = CP.sasBus
     self.scc_bus = CP.sccBus
-    self.minSteerSpeed = CP.minSteerSpeed
     self.leftBlinker = False
     self.rightBlinker = False
-    self.lkas_button_on = self.minSteerSpeed > 10.
+    self.lkas_button_on = True
     self.cruise_main_button = 0
     self.cruiseStateavailable = 0
     self.prev_cruiseStateavailable = 0
@@ -28,6 +27,8 @@ class CarState(CarStateBase):
     self.brakeHold = 0
     self.lkas_button_init_on_Gear = 0
     self.lkas_button_enable = 0
+    self.cancel_button_count = 0
+    self.timer = 0
 
   def update(self, cp, cp2, cp_cam):
     cp_mdps = cp2 if self.mdps_bus else cp
@@ -77,7 +78,21 @@ class CarState(CarStateBase):
 
     self.cruise_main_button = int(cp.vl["CLU11"]["CF_Clu_CruiseSwMain"])
     self.cruise_buttons = int(cp.vl["CLU11"]["CF_Clu_CruiseSwState"])
-    self.lkas_button_on = (cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"] != 0)
+
+    if not self.cruise_main_button:
+      if self.cruise_buttons == 4 and self.prev_cruise_buttons != 4 and self.cancel_button_count < 3:
+        self.cancel_button_count += 1
+        self.timer = 10
+      elif self.cancel_button_count == 3:
+          self.cancel_button_count = 0
+      if self.timer <= 10:
+        self.timer = max(0, self.timer - 1)
+        if self.timer == 0:
+          self.cancel_button_count = 0
+    else:
+      self.cancel_button_count = 0
+
+    # self.lkas_button_on = (cp_cam.vl["LKAS11"]["CF_Lkas_LdwsSysState"] != 0)
     self.lkas_button_enable = 0
 
     if self.lkas_button_on and not self.prev_lkas_button_on:
