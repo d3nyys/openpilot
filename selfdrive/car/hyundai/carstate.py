@@ -82,10 +82,10 @@ class CarState(CarStateBase):
     if not self.cruise_main_button:
       if self.cruise_buttons == 4 and self.prev_cruise_buttons != 4 and self.cancel_button_count < 3:
         self.cancel_button_count += 1
-        self.timer = 10
+        self.timer = 100
       elif self.cancel_button_count == 3:
           self.cancel_button_count = 0
-      if self.timer <= 10 and self.cancel_button_count:
+      if self.timer <= 100 and self.cancel_button_count:
         self.timer = max(0, self.timer - 1)
         if self.timer == 0:
           self.cancel_button_count = 0
