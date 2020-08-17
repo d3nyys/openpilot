@@ -174,7 +174,7 @@ class CarController():
 
       can_sends.append(create_clu11(self.packer, frame, CS.mdps_bus, CS.clu11, Buttons.NONE, enabled_speed))
 
-    if pcm_cancel_cmd and not self.longcontrol:
+    if pcm_cancel_cmd and not self.cp_opcontrol:
       can_sends.append(create_clu11(self.packer, frame, CS.scc_bus, CS.clu11, Buttons.CANCEL, clu11_speed))
     elif CS.out.cruiseState.standstill and not self.longcontrol:
       # SCC won't resume anyway when the lead distace is less than 3.7m
