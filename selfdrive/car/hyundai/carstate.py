@@ -85,7 +85,7 @@ class CarState(CarStateBase):
         self.timer = 10
       elif self.cancel_button_count == 3:
           self.cancel_button_count = 0
-      if self.timer <= 10:
+      if self.timer <= 10 and self.cancel_button_count:
         self.timer = max(0, self.timer - 1)
         if self.timer == 0:
           self.cancel_button_count = 0
