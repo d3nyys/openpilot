@@ -89,6 +89,9 @@ class CarState(CarStateBase):
         self.timer = max(0, self.timer - 1)
         if self.timer == 0:
           self.cancel_button_count = 0
+      print("cancel_pressed", self.cruise_buttons == 4)
+      print("timer", self.timer)
+      print("cancel_button_count", self.cancel_button_count)
     else:
       self.cancel_button_count = 0
 
