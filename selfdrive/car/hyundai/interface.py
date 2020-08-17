@@ -60,7 +60,7 @@ class CarInterface(CarInterfaceBase):
     ret.lateralTuning.pid.kpBP = [0., 10., 30.]
     ret.lateralTuning.pid.kiV = [0.001, 0.003, 0.005]
     ret.lateralTuning.pid.kfBP = [0., 10., 30.]
-    ret.lateralTuning.pid.kfV = [0.00002, 0.00003, 0.00005]
+    ret.lateralTuning.pid.kfV = [0.00002, 0.00003, 0.00003]
 
 
     if candidate == CAR.SANTA_FE:
@@ -205,7 +205,7 @@ class CarInterface(CarInterfaceBase):
     ret.sccBus = 0 if 1057 in fingerprint[0] else 1 if 1057 in fingerprint[1] and 1296 not in fingerprint[1] \
                                                                      else 2 if 1057 in fingerprint[2] else -1
     ret.radarOffCan = ret.sccBus == -1
-    ret.openpilotLongitudinalControl = True
+    ret.openpilotLongitudinalControl = ret.sccBus == 2
     ret.autoLcaEnabled = True
 
     if ret.mdpsBus != 0:
