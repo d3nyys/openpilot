@@ -174,23 +174,22 @@ class PIDController:
   def update(self, setpoint, measurement, speed=0.0, check_saturation=True, override=False, feedforward=0., deadzone=0.,
              freeze_integrator=False, leadvisible=False, leaddistance=0):
     self.speed = speed
+    self.f = feedforward * self.k_f
 
-    self.atargetfuture = feedforward * self.k_f
-
-    if not self.hasreset:
-      if setpoint < measurement:
-        if not leadvisible:
-          setpoint = max(setpoint, self.last_setpoint - 0.01)
-        #else:
-         # setpoint = max(setpoint, self.last_setpoint - 0.15)
-      #else:
-      #  if 1.8 > (setpoint - measurement) > 0 and 5. < setpoint:
-          #setpoint = min(setpoint, self.last_setpoint + 0.005)
+    
+      
+        
+          
+        
+         
+      
+      
+          
   
-    else:
-      self.hasreset = False
+    
+      
 
-    self.f = self.atargetfuture
+    
 
     error = float(apply_deadzone(setpoint - measurement, deadzone))
 
@@ -200,9 +199,6 @@ class PIDController:
       self.id -= self.i_unwind_rate * float(np.sign(self.id))
     else:
       i = self.id + error * self.k_i * self.rate
-      if self.last_error > 1.8 >= error and i > 0:
-        i = 0
-      i = min(i, 0.2)
       control = self.p + self.f + i
 
       if self.convert is not None:
