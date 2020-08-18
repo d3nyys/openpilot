@@ -179,27 +179,10 @@ class PIDController:
 
     if not self.hasreset:
       if setpoint < measurement:
-        if (setpoint - measurement) < -15.:
-          setpoint = max(setpoint, measurement - 15.)
-
         if not leadvisible:
           setpoint = max(setpoint, self.last_setpoint - 0.01)
         else:
           setpoint = max(setpoint, self.last_setpoint - 0.15)
-
-        if leadvisible and (self.locktarget or
-                            (measurement > 10. and leaddistance > (measurement * 2)) or
-                            (leaddistance < (measurement * .8))):
-          self.locktarget = True
-          self.dTR = interp(leaddistance, TR_DBP, TR_DT)
-          if (measurement > 10. and leaddistance > (measurement * 2)):
-             self.atargetfuture = max(self.atargetfuture, (0.5 * (setpoint**2 - measurement**2))
-                                      / max(.1, leaddistance - measurement * self.dTR))
-          elif (leaddistance < (measurement * .8)):
-             self.atargetfuture = min(self.atargetfuture, (0.5 * (setpoint**2 - measurement**2))
-                                      / max(.1, leaddistance - measurement * self.dTR))
-        else:
-          self.locktarget = False
       else:
         if 1.8 > (setpoint - measurement) > 0 and 5. < setpoint:
           setpoint = min(setpoint, self.last_setpoint + 0.005)
