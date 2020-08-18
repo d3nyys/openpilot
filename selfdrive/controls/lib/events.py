@@ -635,11 +635,6 @@ EVENTS = {
     ET.NO_ENTRY: NoEntryAlert("ESP Off"),
   },
 
-  EventName.brakeUnavailable: {
-    ET.SOFT_DISABLE: SoftDisableAlert("Brakes Unavailable - Restart vehicle"),
-    ET.NO_ENTRY: NoEntryAlert("Brakes Unavailable - Restart vehicle"),
-  },
-
   EventName.lowBattery: {
     ET.SOFT_DISABLE: SoftDisableAlert("Low Battery"),
     ET.NO_ENTRY: NoEntryAlert("Low Battery"),
@@ -713,13 +708,23 @@ EVENTS = {
   },
 
   EventName.steerUnavailable: {
-    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Steer Hard Fault: Turn off Car to sleep and Restart"),
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("LKAS Fault: Restart the Car"),
     ET.PERMANENT: Alert(
-      "Steer Hard Fault: Turn off Car to sleep and Restart",
+      "LKAS Fault: Restart the car to engage",
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., .2),
-    ET.NO_ENTRY: NoEntryAlert("Turn off Car to sleep and Restart"),
+    ET.NO_ENTRY: NoEntryAlert("LKAS Fault: Restart the Car"),
+  },
+
+  EventName.brakeUnavailable: {
+    ET.IMMEDIATE_DISABLE: ImmediateDisableAlert("Cruise Fault: Restart the Car"),
+    ET.PERMANENT: Alert(
+      "Cruise Fault: Restart the car to engage",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., .2),
+    ET.NO_ENTRY: NoEntryAlert("Cruise Fault: Restart the Car"),
   },
 
   EventName.gasUnavailable: {
