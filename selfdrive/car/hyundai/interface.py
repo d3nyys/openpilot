@@ -43,7 +43,7 @@ class CarInterface(CarInterfaceBase):
 
     #Long tuning Params -  make individual params for cars, baseline Hyundai genesis
     ret.longitudinalTuning.kpBP = [0., 1., 10., 35.]
-    ret.longitudinalTuning.kpV = [5., 5., 5., 5.]
+    ret.longitudinalTuning.kpV = [2.5., 2.5, 2.5, 2.5]
     ret.longitudinalTuning.kiBP = [0., 15., 35.]
     ret.longitudinalTuning.kiV = [.15, .10, .065]
     ret.longitudinalTuning.deadzoneBP = [0., .5]
