@@ -22,7 +22,7 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def compute_gb(accel, speed):
-    return float(accel) / 1.0
+    return float(accel) / 10.0
 
   @staticmethod
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), has_relay=False, car_fw=[]):  # pylint: disable=dangerous-default-value
@@ -42,28 +42,25 @@ class CarInterface(CarInterfaceBase):
     ret.steermaxLimit = 409  # stock
 
     #Long tuning Params -  make individual params for cars, baseline Hyundai genesis
-
     ret.longitudinalTuning.kpBP = [0., 1., 10., 35.]
-    ret.longitudinalTuning.kpV = [0.025, 0.025, .025, .025]
+    ret.longitudinalTuning.kpV = [0.85, 1.3, .85, .65]
     ret.longitudinalTuning.kiBP = [0., 15., 35.]
-    ret.longitudinalTuning.kiV = [.0005, .0005, .0005]
-
+    ret.longitudinalTuning.kiV = [.15, .10, .065]
     ret.longitudinalTuning.deadzoneBP = [0., .5]
     ret.longitudinalTuning.deadzoneV = [0.00, 0.00]
     ret.gasMaxBP = [0., 1., 1.1, 15., 40.]
     ret.gasMaxV = [.12, .14, .2, .168, .13]
     ret.brakeMaxBP = [0., 5., 5.1]
-    ret.brakeMaxV = [.35, .35, .35]  # safety limits to stop unintended deceleration
+    ret.brakeMaxV = [1., 1., 0.35]  # safety limits to stop unintended deceleration
     ret.longitudinalTuning.kfBP = [0., 5., 10., 20., 30.]
-    ret.longitudinalTuning.kfV = [.5, .5, .5, .5, .5]
+    ret.longitudinalTuning.kfV = [1., 1., 1., .9, .2]
 
-    ret.lateralTuning.pid.kiBP = [0., 1., 2.]
-    ret.lateralTuning.pid.kpV = [0.01, 0.01, 0.01]
+    ret.lateralTuning.pid.kiBP = [0., 1., 20.]
+    ret.lateralTuning.pid.kpV = [0.01, 0.01, 0.02]
     ret.lateralTuning.pid.kpBP = [0., 10., 30.]
-    ret.lateralTuning.pid.kiV = [0.001, 0.003, 0.005]
+    ret.lateralTuning.pid.kiV = [0.001, 0.003, 0.003]
     ret.lateralTuning.pid.kfBP = [0., 10., 30.]
     ret.lateralTuning.pid.kfV = [0.00002, 0.00003, 0.00003]
-
 
     if candidate == CAR.SANTA_FE:
       ret.mass = 3982. * CV.LB_TO_KG + STD_CARGO_KG
@@ -121,8 +118,6 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 3.01
       ret.steerRatio = 16.5
     elif candidate == CAR.GENESIS_G90:
-      ret.steerActuatorDelay = 0.4
-      ret.steerRateCost = 0.45
       ret.mass = 2060. + STD_CARGO_KG
       ret.wheelbase = 3.01
       ret.steerRatio = 16.5
@@ -138,14 +133,12 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.KONA:
       ret.mass = 1275. + STD_CARGO_KG
       ret.wheelbase = 2.7
-      ret.steerRatio = 13.73 * 1.15 # Spec
+      ret.steerRatio = 13.73 * 1.15  # Spec
       tire_stiffness_factor = 0.385
-      ret.lateralTuning.pid.kfBP = [0., 30.]
-      ret.lateralTuning.pid.kfV = [0.00003, 0.00006]
     elif candidate in [CAR.KONA_HEV, CAR.KONA_EV]:
       ret.mass = 1685. + STD_CARGO_KG
       ret.wheelbase = 2.7
-      ret.steerRatio = 13.73 * 1.15 # Spec
+      ret.steerRatio = 13.73 * 1.15  # Spec
       tire_stiffness_factor = 0.385
     elif candidate in [CAR.IONIQ_HEV, CAR.IONIQ_EV_LTD]:
       ret.mass = 1490. + STD_CARGO_KG   #weight per hyundai site https://www.hyundaiusa.com/ioniq-electric/specifications.aspx

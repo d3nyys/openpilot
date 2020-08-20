@@ -112,7 +112,7 @@ class PIDController:
     self._k_f = k_f  # feedforward gain
 
     self.error_idx = -33
-    self.max_accel_d = 0.33528  # 0.75 mph/s
+    self.max_accel_d = 0.22352  # 0.5 mph/s
 
     self.pos_limit = pos_limit
     self.neg_limit = neg_limit

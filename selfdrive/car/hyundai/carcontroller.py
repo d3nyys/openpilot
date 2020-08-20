@@ -75,6 +75,7 @@ class CarController():
     self.acc_paused = False
     self.prev_acc_paused_due_brake = False
     self.manual_steering = False
+    self.manual_steering_timer = 0
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
              left_lane, right_lane, left_lane_depart, right_lane_depart, set_speed, lead_visible):
@@ -116,7 +117,10 @@ class CarController():
       lkas_active = False
 
     if enabled and CS.out.steeringPressed and CS.out.vEgo < LANE_CHANGE_SPEED_MIN and (CS.out.leftBlinker or CS.out.rightBlinker):
-      self.manual_steering = True
+      self.manual_steering_timer += 1
+      if self.manual_steering_timer > 20:
+         self.manual_steering = True
+         self.manual_steering_timer = 20
     elif (self.manual_steering and not CS.out.leftBlinker and not CS.out.rightBlinker) or not CS.out.vEgo < LANE_CHANGE_SPEED_MIN or not enabled:
       self.manual_steering = False
 
