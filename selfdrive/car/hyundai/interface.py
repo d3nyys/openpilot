@@ -22,7 +22,7 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def compute_gb(accel, speed):
-    return float(accel) / 10.0
+    return float(accel) / 1.0
 
   @staticmethod
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), has_relay=False, car_fw=[]):  # pylint: disable=dangerous-default-value
@@ -43,17 +43,17 @@ class CarInterface(CarInterfaceBase):
 
     #Long tuning Params -  make individual params for cars, baseline Hyundai genesis
     ret.longitudinalTuning.kpBP = [0., 1., 10., 35.]
-    ret.longitudinalTuning.kpV = [3.4, 5.2, 3.4, 2.6]
+    ret.longitudinalTuning.kpV = [.85, 1.3, .85, .65]
     ret.longitudinalTuning.kiBP = [0., 15., 35.]
-    ret.longitudinalTuning.kiV = [.30, .20, .13]
+    ret.longitudinalTuning.kiV = [.15, .10, .065]
     ret.longitudinalTuning.deadzoneBP = [0., .5]
     ret.longitudinalTuning.deadzoneV = [0.00, 0.00]
     ret.gasMaxBP = [0., 1., 1.1, 15., 40.]
-    ret.gasMaxV = [1.2, 1.4, 1.2, 1.2, 1.3]
+    ret.gasMaxV = [.12, .14, .12, .12, .13]
     ret.brakeMaxBP = [0., 5., 5.1]
-    ret.brakeMaxV = [9.81, 9.81, 3.5]  # safety limits to stop unintended deceleration
+    ret.brakeMaxV = [1., 1., .35]  # safety limits to stop unintended deceleration
     ret.longitudinalTuning.kfBP = [0., 5., 10., 20., 30.]
-    ret.longitudinalTuning.kfV = [1., 1., 1., .9, .2]
+    ret.longitudinalTuning.kfV = [1., 1., 1., 1., 1.]
 
     ret.lateralTuning.pid.kiBP = [0., 1., 20.]
     ret.lateralTuning.pid.kpV = [0.01, 0.01, 0.02]
