@@ -55,7 +55,7 @@ class RadarInterface(RadarInterfaceBase):
     for ii in sorted(updated_messages):
       if ii == 0x420:
         cpt = self.rcp.vl[ii]
-        valid = bool(cpt["SCC11"]['ACC_ObjStatus'])
+        valid = True
 
         if valid:
           if ii not in self.pts:
