@@ -23,15 +23,14 @@ def get_radar_can_parser(CP):
 class RadarInterface(RadarInterfaceBase):
   def __init__(self, CP):
     super().__init__(CP)
-    self.track_id = 0
-    self.radar_ts = CP.radarTimeStep
     self.rcp = get_radar_can_parser(CP)
-    self.trigger_msg = 0x420
     self.updated_messages = set()
-    self.no_radar = CP.sccBus == -1
+    self.trigger_msg = 0x420
+    self.track_id = 0
+    self.radar_off_can = CP.sccBus == -1
 
   def update(self, can_strings):
-    if self.no_radar:
+    if self.radar_off_can:
       return super().update(None)
 
     vls = self.rcp.update_strings(can_strings)
@@ -47,27 +46,26 @@ class RadarInterface(RadarInterfaceBase):
 
   def _update(self, updated_messages):
     ret = car.RadarData.new_message()
+    cpt = self.rcp.vl
     errors = []
     if not self.rcp.can_valid:
       errors.append("canError")
     ret.errors = errors
 
-    for ii in sorted(updated_messages):
-      if ii == 0x420:
-        cpt = self.rcp.vl[ii]
-        valid = bool(cpt["SCC11"]['ACC_ObjStatus'])
-
-        if valid:
-          if ii not in self.pts:
-            self.pts[ii] = car.RadarData.RadarPoint.new_message()
-            self.pts[ii].trackId = self.track_id
-            self.track_id += 1
-          self.pts[ii].dRel = cpt["SCC11"]['ACC_ObjDist']  # from front of car
-          self.pts[ii].yRel = -cpt["SCC11"]['ACC_ObjLatPos']  # in car frame's y axis, left is negative
-          self.pts[ii].vRel = cpt["SCC11"]['ACC_ObjRelSpd']
-          self.pts[ii].aRel = float('nan')
-          self.pts[ii].yvRel = float('nan')
-          self.pts[ii].measured = valid
+    valid = cpt["SCC11"]['ACC_ObjStatus']
+    if valid:
+      for ii in range(1):
+        if ii not in self.pts:
+          self.pts[ii] = car.RadarData.RadarPoint.new_message()
+          self.pts[ii].trackId = self.track_id
+          self.track_id += 1
+        self.pts[ii].dRel = cpt["SCC11"]['ACC_ObjDist']  # from front of car
+        self.pts[ii].yRel = -cpt["SCC11"]['ACC_ObjLatPos']  # in car frame's y axis, left is negative
+        self.pts[ii].vRel = cpt["SCC11"]['ACC_ObjRelSpd']
+        self.pts[ii].aRel = float('nan')
+        self.pts[ii].yvRel = float('nan')
+        self.pts[ii].measured = True
 
     ret.points = list(self.pts.values())
     return ret
+
