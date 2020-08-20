@@ -68,9 +68,6 @@ class RadarInterface(RadarInterfaceBase):
           self.pts[ii].aRel = float('nan')
           self.pts[ii].yvRel = float('nan')
           self.pts[ii].measured = valid
-        else:
-          if ii in self.pts:
-            del self.pts[ii]
 
     ret.points = list(self.pts.values())
     return ret
