@@ -17,7 +17,7 @@ def get_radar_can_parser(CP):
     # address, frequency
     ("SCC11", 50),
   ]
-  return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, CP.sccBus)
+  return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)#CP.sccBus)
 
 
 class RadarInterface(RadarInterfaceBase):
@@ -27,7 +27,7 @@ class RadarInterface(RadarInterfaceBase):
     self.updated_messages = set()
     self.trigger_msg = 0x420
     self.track_id = 0
-    self.radar_off_can = CP.sccBus == -1
+    self.radar_off_can = False #CP.sccBus == -1
 
   def update(self, can_strings):
     if self.radar_off_can:
