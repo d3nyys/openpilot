@@ -38,7 +38,7 @@ class RadarInterface(RadarInterfaceBase):
     self.updated_messages.update(vls)
 
     if self.trigger_msg not in self.updated_messages:
-      return None
+      return car.RadarData.new_message()
 
     rr = self._update(self.updated_messages)
     self.updated_messages.clear()
@@ -55,7 +55,7 @@ class RadarInterface(RadarInterfaceBase):
     for ii in sorted(updated_messages):
       if ii == 0x420:
         cpt = self.rcp.vl[ii]
-        valid = True
+        valid = bool(cpt["SCC11"]['ACC_ObjStatus'])
 
         if valid:
           if ii not in self.pts:
