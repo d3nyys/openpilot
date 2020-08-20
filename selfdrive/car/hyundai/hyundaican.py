@@ -124,9 +124,6 @@ def create_scc12(packer, apply_accel, enabled, standstill, accpause, cruise_on, 
     else:
       values["aReqRaw"] = 0
       values["aReqValue"] = 0
-
-    values["aReqRaw"] = 1
-    values["aReqValue"] = 1
     values["CR_VSM_ChkSum"] = 0
 
     dat = packer.make_can_msg("SCC12", 0, values)[2]
