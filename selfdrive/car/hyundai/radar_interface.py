@@ -52,19 +52,15 @@ class RadarInterface(RadarInterfaceBase):
       errors.append("canError")
     ret.errors = errors
 
-    valid = cpt["SCC11"]['ACC_ObjStatus']
-   
-    for ii in range(1):
-      if ii not in self.pts:
-        self.pts[ii] = car.RadarData.RadarPoint.new_message()
-        self.pts[ii].trackId = self.track_id
-        self.track_id += 1
-      self.pts[ii].dRel = cpt["SCC11"]['ACC_ObjDist']  # from front of car
-      self.pts[ii].yRel = -cpt["SCC11"]['ACC_ObjLatPos']  # in car frame's y axis, left is negative
-      self.pts[ii].vRel = cpt["SCC11"]['ACC_ObjRelSpd']
-      self.pts[ii].aRel = float('nan')
-      self.pts[ii].yvRel = float('nan')
-      self.pts[ii].measured = True
+    if cpt["SCC11"]['ACC_ObjDist'] < 150:
+      self.pts[0] = car.RadarData.RadarPoint.new_message()
+      self.pts[0].trackId = self.track_id
+      self.pts[0].dRel = cpt["SCC11"]['ACC_ObjDist']  # from front of car
+      self.pts[0].yRel = -cpt["SCC11"]['ACC_ObjLatPos']  # in car frame's y axis, left is negative
+      self.pts[0].vRel = cpt["SCC11"]['ACC_ObjRelSpd']
+      self.pts[0].aRel = float('nan')
+      self.pts[0].yvRel = float('nan')
+      self.pts[0].measured = bool(cpt["SCC11"]['ACC_ObjStatus'])
 
     ret.points = list(self.pts.values())
     return ret
