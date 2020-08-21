@@ -14,7 +14,7 @@ from selfdrive.controls.lib.pathplanner import LANE_CHANGE_SPEED_MIN
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 # Accel Hard limits
-ACCEL_HYST_GAP = 0.0  # don't change accel command for small oscilalitons within this value
+ACCEL_HYST_GAP = 0.1 # don't change accel command for small oscilalitons within this value
 ACCEL_MAX = 3.  # 1.5 m/s2
 ACCEL_MIN = -3.5  # 3   m/s2
 ACCEL_SCALE = 1.
@@ -97,7 +97,8 @@ class CarController():
 
     # gas and brake
     apply_accel = actuators.gas - actuators.brake
-
+    
+    apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady)
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
 
     # Steering Torque
