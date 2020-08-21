@@ -205,6 +205,8 @@ class CarInterface(CarInterfaceBase):
     ret.openpilotLongitudinalControl = ret.sccBus == 2
     ret.autoLcaEnabled = True
 
+    ret.radarTimeStep = 0.01
+
     if ret.mdpsBus != 0:
       ret.minSteerSpeed = 0.
 
