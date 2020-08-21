@@ -45,13 +45,13 @@ class RadarInterface(RadarInterfaceBase):
 
   def _update(self, updated_messages):
     ret = car.RadarData.new_message()
+    cpt = self.rcp.vl
     errors = []
     if not self.rcp.can_valid:
       errors.append("canError")
     ret.errors = errors
 
     for ii in range(20):
-      cpt = self.rcp.vl[ii]
 
       if cpt["SCC11"]['ACC_ObjDist'] < 150:
         if ii not in self.pts:
