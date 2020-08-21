@@ -15,7 +15,6 @@ def get_radar_can_parser(CP):
   ]
   checks = [
     # address, frequency
-    ("SCC11", 50),
   ]
   return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, CP.sccBus)
 
