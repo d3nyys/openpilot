@@ -45,7 +45,7 @@ class CarInterface(CarInterfaceBase):
     ret.longitudinalTuning.kpBP = [0., 1., 10., 35.]
     ret.longitudinalTuning.kpV = [.1, 1.3, 1.3, 1.3]
     ret.longitudinalTuning.kiBP = [0., 15., 35.]
-    ret.longitudinalTuning.kiV = [.5, .5, .5]
+    ret.longitudinalTuning.kiV = [1., 1., 1.]
     ret.longitudinalTuning.deadzoneBP = [0., .5]
     ret.longitudinalTuning.deadzoneV = [0.00, 0.00]
     ret.gasMaxBP = [0., 1., 1.1, 15., 40.]
