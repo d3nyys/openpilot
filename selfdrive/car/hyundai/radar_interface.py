@@ -60,7 +60,7 @@ class RadarInterface(RadarInterfaceBase):
       self.pts[0].vRel = cpt["SCC11"]['ACC_ObjRelSpd']
       self.pts[0].aRel = float('nan')
       self.pts[0].yvRel = float('nan')
-      self.pts[0].measured = bool(cpt["SCC11"]['ACC_ObjStatus'])
+      self.pts[0].measured = True
 
     ret.points = list(self.pts.values())
     return ret
