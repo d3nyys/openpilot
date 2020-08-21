@@ -170,16 +170,13 @@ class PIDController:
     self.atargetfuture = 0
     self.locktarget = False
 
-
   def update(self, setpoint, measurement, speed=0.0, check_saturation=True, override=False, feedforward=0., deadzone=0.,
              freeze_integrator=False, leadvisible=False, leaddistance=0):
     self.speed = speed
 
-    self.f = feedforward * self.k_f
-
     error = float(apply_deadzone(setpoint - measurement, deadzone))
-
     self.p = error * self.k_p
+    self.f = feedforward * self.k_f
 
     if override:
       self.id -= self.i_unwind_rate * float(np.sign(self.id))
@@ -195,7 +192,7 @@ class PIDController:
 
       # Update when changing i will move the control away from the limits
       # or when i will move towards the sign of the error
-      if ((error >= 0 and (control <= self.pos_limit or i < 0.0)) or \
+      if ((error >= 0 and (control <= self.pos_limit or i < 0.0)) or
           (error <= 0 and (control >= self.neg_limit or i > 0.0))) and \
          not freeze_integrator:
         self.id = i
