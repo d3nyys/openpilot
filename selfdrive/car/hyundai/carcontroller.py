@@ -16,7 +16,7 @@ VisualAlert = car.CarControl.HUDControl.VisualAlert
 # Accel Hard limits
 ACCEL_HYST_GAP = 0.1 # don't change accel command for small oscilalitons within this value
 ACCEL_MAX = 3.  # 1.5 m/s2
-ACCEL_MIN = -3.5  # 3   m/s2
+ACCEL_MIN = -5.  # 3   m/s2
 ACCEL_SCALE = 1.
 
 def accel_hysteresis(accel, accel_steady):

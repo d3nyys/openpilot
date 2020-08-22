@@ -1,8 +1,6 @@
 import numpy as np
 from common.numpy_fast import clip, interp
 
-TR_DBP = [4., 12., 30., 50.]
-TR_DT = [5., 1., .5, .2]
 
 GainSaS_BP = [0., 2., 5., 10.]
 Gain_g = [0., .01, .08, .12]

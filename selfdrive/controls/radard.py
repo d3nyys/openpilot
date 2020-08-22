@@ -166,7 +166,7 @@ class RadarD():
     dat.radarState.radarErrors = list(rr.errors)
     dat.radarState.controlsStateMonoTime = sm.logMonoTime['controlsState']
 
-    if has_radar or (1==1):
+    if has_radar:
       dat.radarState.leadOne = get_lead(self.v_ego, self.ready, clusters, sm['model'].lead, low_speed_override=True)
       if not dat.radarState.leadOne.status:
         dat.radarState.leadOne.dRel = 150
