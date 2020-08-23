@@ -29,6 +29,7 @@ class LongitudinalMpc():
     self.new_lead = False
 
     self.last_cloudlog_t = 0.0
+    TR = 1.8
 
   def send_mpc_solution(self, pm, qp_iterations, calculation_time):
     qp_iterations = max(0, qp_iterations)
