@@ -97,8 +97,8 @@ class LongitudinalMpc():
     # Calculate mpc
     t = sec_since_boot()
     TR = interp(v_ego, BpTr, TrY)
-    if v_lead < 0:
-      TR = max(x_lead/abs(v_lead), TR)
+   # if v_lead < 0:
+   #  TR = max(x_lead/abs(v_lead), TR)
     TR = clip(TR, 0.85, 2.2)
     n_its = self.libmpc.run_mpc(self.cur_state, self.mpc_solution, self.a_lead_tau, a_lead, TR)
     duration = int((sec_since_boot() - t) * 1e9)
