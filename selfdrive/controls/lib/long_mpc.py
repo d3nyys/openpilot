@@ -12,8 +12,8 @@ from selfdrive.controls.lib.drive_helpers import MPC_COST_LONG
 
 LOG_MPC = os.environ.get('LOG_MPC', False)
 
-BpTr = [0., 5., 10., 20., 30.]
-TrY = [2.2, 1.8, 1.6, 1.2, 1.]
+BpTr = [0.,  .2,  5., 24.9, 25., 30., 36.]
+TrY = [.85, 1.8, 2.2,  1.8, 1.8, 1., .85]
 
 class LongitudinalMpc():
   def __init__(self, mpc_id):
@@ -29,7 +29,6 @@ class LongitudinalMpc():
     self.new_lead = False
 
     self.last_cloudlog_t = 0.0
-    TR = 1.8
 
   def send_mpc_solution(self, pm, qp_iterations, calculation_time):
     qp_iterations = max(0, qp_iterations)
@@ -97,8 +96,6 @@ class LongitudinalMpc():
     # Calculate mpc
     t = sec_since_boot()
     TR = interp(v_ego, BpTr, TrY)
-   # if v_lead < 0:
-   #  TR = max(x_lead/abs(v_lead), TR)
     TR = clip(TR, 0.85, 2.2)
     n_its = self.libmpc.run_mpc(self.cur_state, self.mpc_solution, self.a_lead_tau, a_lead, TR)
     duration = int((sec_since_boot() - t) * 1e9)
