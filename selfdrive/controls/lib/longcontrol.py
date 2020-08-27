@@ -8,7 +8,7 @@ STOPPING_EGO_SPEED = 0.5
 MIN_CAN_SPEED = 0.3  # TODO: parametrize this in car interface
 STOPPING_TARGET_SPEED = MIN_CAN_SPEED + 0.01
 STARTING_TARGET_SPEED = 0.20
-BRAKE_THRESHOLD_TO_PID = 0.0
+BRAKE_THRESHOLD_TO_PID = 0.20
 
 STOPPING_BRAKE_RATE = 0.2  # brake_travel/s while trying to stop
 STARTING_BRAKE_RATE = 2.0  # brake_travel/s while releasing on restart
