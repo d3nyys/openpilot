@@ -126,11 +126,11 @@ class LongControl():
     # Intention is to stop, switch to a different brake control until we stop
     elif self.long_control_state == LongCtrlState.stopping:
       # Keep applying brakes until the car is stopped
-      factor = 1
+      factor = 1.
       if hasLead:
-        factor = interp(dRel,[2.0,3.0,4.0,5.0,6.0,7.0,8.0], [5.0,2.5,1.0,0.5,0.25,0.05,0.0])
+        factor = interp(dRel,[2.0,3.0,4.0,5.0,6.0,7.0,8.0], [5.0,2.5,1.0,0.5,0.25,0.05,0.005])
       if output_gb > -BRAKE_STOPPING_TARGET:
-        output_gb -= STOPPING_BRAKE_RATE / RATE * factor
+        output_gb -= (STOPPING_BRAKE_RATE * factor) / RATE
       output_gb = clip(output_gb, -brake_max, gas_max)
 
       self.v_pid = CS.vEgo
@@ -138,11 +138,11 @@ class LongControl():
 
     # Intention is to move again, release brake fast before handing control to PID
     elif self.long_control_state == LongCtrlState.starting:
-      factor = 1
+      factor = 1.
       if hasLead:
-        factor = interp(dRel,[0.0,2.0,4.0,6.0], [0.0,0.5,1.0,2.0])
+        factor = interp(dRel,[0.0,2.0,4.0,6.0], [0.5,0.5,1.0,2.0])
       if output_gb < -0.2:
-        output_gb += STARTING_BRAKE_RATE / RATE * factor
+        output_gb += (STARTING_BRAKE_RATE * factor) / RATE
       self.v_pid = CS.vEgo
       self.pid.reset()
 
