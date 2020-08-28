@@ -124,6 +124,12 @@ typedef struct UIScene {
   int ui_viz_rx;
   int ui_viz_rw;
   int ui_viz_ro;
+  
+  int lead_status;
+  float lead_d_rel, lead_y_rel, lead_v_rel;
+
+  int lead_status2;
+  float lead_d_rel2, lead_y_rel2, lead_v_rel2;
 
   std::string alert_text1;
   std::string alert_text2;
