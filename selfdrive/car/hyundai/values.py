@@ -22,6 +22,7 @@ class CAR:
   IONIQ_HEV = "HYUNDAI IONIQ HYBRID PREMIUM 2018-2020"
   IONIQ_EV_LTD = "HYUNDAI IONIQ ELECTRIC LIMITED 2019"
   KONA = "HYUNDAI KONA 2020"
+  KONA_MANUAL = "HYUNDAI KONA 2020 MANUAL"
   KONA_EV = "HYUNDAI KONA ELECTRIC 2019"
   KONA_HEV = "HYUNDAI KONA HEV 2019"
   SANTA_FE = "HYUNDAI SANTA FE LIMITED 2019"
@@ -113,6 +114,9 @@ FINGERPRINTS = {
   CAR.KONA: [{
     67: 8, 127: 8, 304: 8, 320: 8, 339: 8, 354: 3, 356: 4, 544: 8, 593: 8, 608: 8, 688: 5, 809: 8, 832 : 8, 854: 7, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 916: 8, 1040: 8, 1056: 8, 1057: 8, 1064: 8, 1078: 4, 1107: 5, 1136: 8, 1151: 6, 1156: 8, 1170: 8, 1173: 8, 1186: 2, 1191: 2, 1193: 8, 1265: 4,1280: 1, 1287: 4, 1290: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1378: 8, 1384: 8, 1394: 8, 1407: 8, 1414: 3, 1419: 8, 1427: 6, 1456: 4, 1470: 8, 1988: 8, 1996: 8, 2000: 8, 2001: 8, 2004: 8, 2008: 8, 2009: 8, 2012: 8
   }],
+  CAR.KONA_MANUAL: [{
+    67: 8, 127: 8, 304: 8, 320: 8, 339: 8, 356: 4, 544: 8, 593: 8, 608: 8, 688: 5, 809: 8, 832: 8, 854: 7, 870: 7, 871: 8, 872: 8, 897: 8, 902: 8, 903: 8, 1040: 8, 1078: 4, 1107: 5, 1136: 8, 1156: 8, 1170: 8, 1173: 8, 1191: 2, 1193: 8, 1265: 4, 1280: 1, 1287: 4, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1363: 8, 1369: 8, 1384: 8, 1394: 8, 1407: 8, 1427: 6, 1456: 4, 1470: 8
+   }],
   CAR.KONA_HEV: [{
     68: 8, 127: 8, 304: 8, 320: 8, 339: 8, 352: 8, 356: 4, 544: 8, 546: 8, 547: 8, 548: 8, 549: 8, 576: 8, 593: 8, 688: 5, 832: 8, 881: 8, 882: 8, 897: 8, 902: 8, 903: 8, 905: 8, 909: 8, 916: 8, 1040: 8, 1042: 8, 1056: 8, 1057: 8, 1078: 4, 1136: 6, 1138: 4, 1151: 6, 1155: 8, 1157: 4, 1164: 8, 1168: 7, 1173: 8, 1183: 8, 1186: 2, 1191: 2, 1193: 8, 1225: 8, 1265: 4, 1280: 1, 1287: 4, 1290: 8, 1291: 8, 1292: 8, 1294: 8, 1312: 8, 1322: 8, 1342: 6, 1345: 8, 1348: 8, 1355: 8, 1363: 8, 1369: 8, 1378: 8, 1379: 8, 1407: 8, 1419: 8, 1427: 6, 1429: 8, 1430: 8, 1448: 8, 1456: 4, 1470: 8, 1476: 8, 1535: 8
   }],
@@ -214,6 +218,12 @@ FW_VERSIONS = {
     (Ecu.eps, 0x7d4, None): [b'\xf1\x00OS  MDPS C 1.00 1.05 56310J9030\x00 4OSDC105', ],
     (Ecu.eps, 0x7d4, None): [b'\xf1\x00OS  MDPS C 1.00 1.05 56310/J9030 4OSDC105', ],
   },
+  CAR.KONA_MANUAL: {
+    (Ecu.engine, 0x7E0, None): [b'\x01TOS-KEC00F10160J'],
+    (Ecu.esp, 0x7D1, None): [b'\xf1\x816V3RAS00006.ELF\xf1\x00\x00\x00\x00\x00\x00\x00\xf1\xa01.07'],
+    (Ecu.eps, 0x7D4, None): [b'\xf1\x00OS  MDPS C 1.00 1.05 56310J9000\x00 4OSDC105'],
+    (Ecu.fwdCamera, 0x7C4, None): [b'\xf1\x00OS9 LKAS MT EUR LHD 1.00 1.00 95740-J9300 g21'],
+  },
   CAR.KIA_OPTIMA: {
     (Ecu.eps, 0x7d4, None): [b'\xf1\x00TM  MDPS C 1.00 1.00 56340-S2000 8409'],
     (Ecu.engine, 0x7e0, None): [b'\x01TJFAJNU06F201H03'],
@@ -238,6 +248,7 @@ FEATURES = {
   "use_fca": set([]),
 
   "use_bsm": set([]),
+  "use_manual_transmission": set([CAR.KONA_MANUAL]),
 }
 
 ELEC_VEH = set([CAR.IONIQ_EV_LTD, CAR.KONA_EV, CAR.KIA_NIRO_EV])
@@ -254,6 +265,7 @@ DBC = {
   CAR.IONIQ_HEV: dbc_dict('hyundai_kia_generic_hybrid', None),
   CAR.IONIQ_EV_LTD: dbc_dict('hyundai_kia_generic', None),
   CAR.KONA: dbc_dict('hyundai_kia_generic', None),
+  CAR.KONA_MANUAL: dbc_dict('hyundai_kia_generic', None),
   CAR.KONA_EV: dbc_dict('hyundai_kia_generic', None),
   CAR.KONA_HEV: dbc_dict('hyundai_kia_generic_hybrid', None),
   CAR.SANTA_FE: dbc_dict('hyundai_kia_generic', None),
