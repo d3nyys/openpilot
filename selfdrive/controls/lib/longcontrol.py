@@ -7,8 +7,8 @@ LongCtrlState = log.ControlsState.LongControlState
 STOPPING_EGO_SPEED = 0.2
 MIN_CAN_SPEED = 0.3  # TODO: parametrize this in car interface
 STOPPING_TARGET_SPEED = MIN_CAN_SPEED + 0.01
-STARTING_TARGET_SPEED = 0.0
-BRAKE_THRESHOLD_TO_PID = 0.2
+STARTING_TARGET_SPEED = 0.01
+BRAKE_THRESHOLD_TO_PID = 0.0
 
 STOPPING_BRAKE_RATE = 0.2  # brake_travel/s while trying to stop
 STARTING_BRAKE_RATE = 0.8  # brake_travel/s while releasing on restart
@@ -24,9 +24,7 @@ def long_control_state_trans(active, long_control_state, v_ego, v_target, v_pid,
                              output_gb, brake_pressed, gas_pressed, avh_active, op_paused, standstill, cruise_on, stop):
   """Update longitudinal control state machine"""
     # (v_ego < 2.0 and standstill) or 
-  stopping_condition = stop or (v_ego < STOPPING_EGO_SPEED and
-                        ((v_pid < STOPPING_TARGET_SPEED and v_target < STOPPING_TARGET_SPEED) or
-                        brake_pressed))
+  stopping_condition = stop
 
   starting_condition = v_target > STARTING_TARGET_SPEED
 
